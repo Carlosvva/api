@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Buscar en Itunes, TV Maze, Worldbank</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <link href="style.css" rel="stylesheet">
+  <link rel="icon" href="icon.svg">
+</head>
+<body>
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+  <header class="masthead mb-auto"></header>
+  <main role="main" class="inner cover">
+    <h3 class="cover-heading" style="text-align: center;">Obten resultados de tu sitios favoritos</h3>
+    <p class="lead" style="text-align: center;">(Itunes, series de tv y más...)</p>
+    <div class="form-inline">
+        <input type="text" class="form-control" id="searchinput" placeholder="Ingresa tu busqueda">
+        <button onclick="lookup(); limpiar();" id="limpiarybuscar" class="btn btn-primary">buscar</button>
+    </div>
+    <div id="loader" style="display: none;">
+            <img src="loader.gif" width="50px" height="50px">
+        </div>
+    <div id="response">
+        </div>
+  </main>
+
+  <footer class="mastfoot mt-auto"></footer>
+</div>
+    <script>
+        function limpiar(){
+            document.getElementById("response").innerHTML= "";
+        }
+        function lookup() {
+            $search_val = $( "#searchinput" ).val();
+            $host = window.location.href;
+            $.ajax({
+                type: "GET",
+                url: $host + 'server.php',
+                data: {search_val: $search_val},
+                dataType : "JSON",
+                beforeSend: function() {
+                    $("#loader").show();
+                },
+                success: function(response) {
+                    var array = Object.keys(response);
+                    array.sort();
+                    for(var i=0; i<array.length; i++) {
+                        $('#response').append(
+                            '<div class="item-resultado"><img src="'+response[array[i]][0]+'"> <a href="'+response[array[i]][1]+'">'+array[i]+'</a></div>'
+                        )
+                    }
+                },
+                complete:function(response){
+                    // Hide image container
+                    $("#loader").hide();
+                }
+            })
+        }
+    </script>
+</body>
+</html>
